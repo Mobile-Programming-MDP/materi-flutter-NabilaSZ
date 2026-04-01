@@ -1,19 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:pilem/model/movie.dart';
+import 'package:pilem/models/movie.dart';
 import 'package:pilem/screens/detail_screen.dart';
-import 'package:pilem/services/api_service.dart';
+import 'package:pilem/services/api_services.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
-
   @override
   SearchScreenState createState() => SearchScreenState();
 }
+
 class SearchScreenState extends State<SearchScreen> {
   final ApiService _apiService = ApiService();
   final TextEditingController _searchController = TextEditingController();
   List<Movie> _searchResults = [];
-
   @override
   void initState() {
     super.initState();
@@ -33,9 +32,8 @@ class SearchScreenState extends State<SearchScreen> {
       });
       return;
     }
-
     final List<Map<String, dynamic>> searchData =
-    await _apiService.searchMovies(_searchController.text);
+        await _apiService.searchMovies(_searchController.text);
     setState(() {
       _searchResults = searchData.map((e) => Movie.fromJson(e)).toList();
     });
@@ -95,24 +93,18 @@ class SearchScreenState extends State<SearchScreen> {
                   return Padding(
                     padding: const EdgeInsets.symmetric(vertical: 4),
                     child: ListTile(
-                      leading: SizedBox(
+                      leading: Image.network(
+                        'https://image.tmdb.org/t/p/w500${movie.posterPath}',
                         height: 50,
                         width: 50,
-                        child: Image.network(
-                          movie.posterPath != 'none'
-                            ?'https://image.tmdb.org/t/p/w500${movie.posterPath}'
-                              : 'https://fakeimg.pl/600x400?text=no+image',
-                          fit: BoxFit.cover,
-                        ),
+                        fit: BoxFit.cover,
                       ),
                       title: Text(movie.title),
                       onTap: () {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) =>
-                                DetailScreen(movie:
-                                movie),
+                            builder: (context) => DetailScreen(movie: movie),
                           ),
                         );
                       },
